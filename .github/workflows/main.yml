@@ -15,14 +15,13 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-node-version: 20
+          node-version: 20
 
       - name: Install dependencies
         run: |
-          cd "bombero activo"
           npm install
 
       - name: Build Project
         run: |
-          cd "bombero activo"
           echo "Compilando IPA..."
+
