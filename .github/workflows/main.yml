@@ -1,0 +1,43 @@
+name: Build iOS IPA
+
+on:
+  workflow_dispatch: {}          # permite lanzar el workflow manualmente
+  push:
+    branches: [ main ]           # se ejecuta en cada push a *main*
+
+jobs:
+  build-ios:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install npm dependencies
+        run: npm ci
+
+      - name: Install CocoaPods
+        run: sudo gem install cocoapods
+
+      - name: Add iOS platform (force)
+        run: npx cap add ios --force
+
+      - name: Sync Capacitor iOS
+        run: npx cap sync ios
+
+      - name: Build IPA
+        run: |
+          cd ios
+          chmod +x build_ipa.sh
+          ./build_ipa.sh
+
+      - name: Upload IPA artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: BomberoActivo.ipa
+          path: ios/build/IPA/App.ipa
